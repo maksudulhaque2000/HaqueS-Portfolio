@@ -5,8 +5,8 @@ import { useInView } from 'react-intersection-observer';
 import { SectionTitle } from '@/components/ui/section-title';
 import { ProjectCard } from '@/components/ui/project-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 
-// Project ইন্টারফেস
 export interface Project {
   id: number;
   title: string;
@@ -19,7 +19,6 @@ export interface Project {
   featured: boolean;
 }
 
-// GitHub API রিপোজিটরির ডেটার জন্য টাইপ
 interface GitHubRepo {
   id: number;
   name: string;
@@ -35,6 +34,7 @@ interface GitHubRepo {
 
 const GITHUB_USERNAME = 'maksudulhaque2000';
 const FEATURED_STARS_THRESHOLD = 5;
+const PROJECTS_PER_PAGE = 6;
 
 const formatRepoName = (name: string): string => {
   return name
@@ -47,7 +47,7 @@ const formatRepoName = (name: string): string => {
 };
 
 export default function Projects() {
-  const [ref, inView] = useInView({
+  const [sectionRef, sectionInView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
@@ -57,13 +57,13 @@ export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const categories = [
     { value: 'all', label: 'All Projects' },
     { value: 'frontend', label: 'Frontend' },
     { value: 'backend', label: 'Backend' },
     { value: 'fullstack', label: 'Full Stack' },
-    // { value: 'mobile', label: 'Mobile' },
   ];
 
   useEffect(() => {
@@ -72,52 +72,38 @@ export default function Projects() {
     const fetchGitHubProjects = async () => {
       setLoading(true);
       setError(null);
-
-      // .env.local থেকে GitHub টোকেন অ্যাক্সেস করা
       const GITHUB_TOKEN = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
       const headers: HeadersInit = {};
-
       if (GITHUB_TOKEN) {
         headers['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
-        // ক্লাসিক টোকেনের জন্য 'token YOUR_TOKEN' ও কাজ করে, তবে 'Bearer YOUR_TOKEN' বেশি স্ট্যান্ডার্ড
       }
 
       try {
-        // API কল করার সময় হেডার পাস করা
         const response = await fetch(
           `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=100`,
-          { headers } // এখানে হেডার যোগ করা হয়েছে
+          { headers }
         );
-
         if (!response.ok) {
           throw new Error(`GitHub API error: ${response.status} - ${response.statusText}`);
         }
         const repos: GitHubRepo[] = await response.json();
-
-        const fetchedProjects: Project[] = await Promise.all(
+        const fetchedProjectsData: Project[] = await Promise.all(
           repos.map(async (repo) => {
             let imageUrl = `https://via.placeholder.com/400x225.png?text=${encodeURIComponent(formatRepoName(repo.name))}`;
-
             try {
-              // README API কল করার সময়ও হেডার পাস করা
               const readmeApiResponse = await fetch(
                 `https://api.github.com/repos/${repo.full_name}/readme`,
-                { headers } // এখানে হেডার যোগ করা হয়েছে
+                { headers }
               );
-
               if (readmeApiResponse.ok) {
                 const readmeData = await readmeApiResponse.json();
                 if (readmeData.content) {
                   const readmeContentDecoded = atob(readmeData.content);
-
                   const htmlImageRegex = /<img[^>]*src=["']([^"']+)["'][^>]*>/i;
                   const htmlMatch = readmeContentDecoded.match(htmlImageRegex);
-
                   if (htmlMatch && htmlMatch[1]) {
                     let foundUrl = htmlMatch[1].trim();
-                    if (foundUrl.startsWith('./')) {
-                      foundUrl = foundUrl.substring(2);
-                    }
+                    if (foundUrl.startsWith('./')) foundUrl = foundUrl.substring(2);
                     if (!foundUrl.startsWith('http://') && !foundUrl.startsWith('https://') && !foundUrl.startsWith('data:')) {
                       imageUrl = `https://raw.githubusercontent.com/${repo.full_name}/${repo.default_branch}/${foundUrl}`;
                     } else {
@@ -128,9 +114,7 @@ export default function Projects() {
                     const markdownMatch = readmeContentDecoded.match(markdownImageRegex);
                     if (markdownMatch && markdownMatch[1]) {
                       let foundUrl = markdownMatch[1].trim();
-                      if (foundUrl.startsWith('./')) {
-                        foundUrl = foundUrl.substring(2);
-                      }
+                      if (foundUrl.startsWith('./')) foundUrl = foundUrl.substring(2);
                       if (!foundUrl.startsWith('http://') && !foundUrl.startsWith('https://') && !foundUrl.startsWith('data:')) {
                         imageUrl = `https://raw.githubusercontent.com/${repo.full_name}/${repo.default_branch}/${foundUrl}`;
                       } else {
@@ -143,21 +127,17 @@ export default function Projects() {
             } catch (readmeError) {
               console.warn(`Could not fetch or parse README for ${repo.name}:`, readmeError);
             }
-
             let category: Project['category'] = 'fullstack';
             const repoTopics = repo.topics.map(t => t.toLowerCase());
             if (repoTopics.includes('fullstack')) category = 'fullstack';
             else if (repoTopics.includes('backend')) category = 'backend';
             else if (repoTopics.includes('frontend')) category = 'frontend';
             else if (repoTopics.includes('mobile')) category = 'mobile';
-
             const technologies = Array.from(new Set([
               ...(repo.language ? [repo.language] : []),
               ...repo.topics
             ])).filter(Boolean);
-
             const featured = repoTopics.includes('featured') || repo.stargazers_count > FEATURED_STARS_THRESHOLD;
-
             return {
               id: repo.id,
               title: formatRepoName(repo.name),
@@ -171,7 +151,7 @@ export default function Projects() {
             };
           })
         );
-        setProjects(fetchedProjects);
+        setProjects(fetchedProjectsData);
       } catch (err: any) {
         setError(err.message);
         console.error("Failed to fetch projects from GitHub:", err);
@@ -179,26 +159,44 @@ export default function Projects() {
         setLoading(false);
       }
     };
-
     fetchGitHubProjects();
-  }, []); // শুধুমাত্র কম্পোনেন্ট মাউন্ট হওয়ার সময় একবার কল হবে
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [currentCategory]);
 
   const filteredProjects = currentCategory === 'all'
     ? projects
     : projects.filter(project => project.category === currentCategory);
+
+  const indexOfLastProject = currentPage * PROJECTS_PER_PAGE;
+  const indexOfFirstProject = indexOfLastProject - PROJECTS_PER_PAGE;
+  const currentProjectsToDisplay = filteredProjects.slice(indexOfFirstProject, indexOfLastProject);
+  const totalPages = Math.ceil(filteredProjects.length / PROJECTS_PER_PAGE);
+
+  const paginate = (pageNumber: number) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+      const projectSection = document.getElementById('projects');
+      if (projectSection) {
+        projectSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
 
   if (!mounted) {
     return null;
   }
 
   return (
-    <section id="projects" className="py-20 md:py-32 bg-muted/30">
+    <section id="projects" className="py-20 md:py-32 bg-muted/30" ref={sectionRef}>
       <div className="container px-4 md:px-6">
         <SectionTitle
           title="My Projects"
           subtitle="A showcase of my recent work and the technologies I've been working with"
         />
-        <div ref={ref} className="mt-12">
+        <div className="mt-12">
           <Tabs defaultValue="all" onValueChange={(value) => setCurrentCategory(value)} className="w-full">
             <div className="flex justify-center mb-8">
               <TabsList className={`grid grid-cols-2 md:grid-cols-${Math.min(categories.length, 4)}`}>
@@ -217,18 +215,51 @@ export default function Projects() {
               {loading && <p className="text-center py-8">Loading projects from GitHub...</p>}
               {error && <p className="text-center py-8 text-red-500">Error: {error}</p>}
               {!loading && !error && filteredProjects.length === 0 && (
-                <p className="text-center py-8">No projects found for "{categories.find(c=>c.value === currentCategory)?.label}" category.</p>
+                <p className="text-center py-8">No projects found for "{categories.find(c => c.value === currentCategory)?.label}" category.</p>
               )}
-              {!loading && !error && filteredProjects.length > 0 && (
+              {!loading && !error && currentProjectsToDisplay.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredProjects.map((project, index) => (
+                  {currentProjectsToDisplay.map((project, index) => (
                     <ProjectCard
                       key={project.id}
                       project={project}
                       index={index}
-                      inView={inView}
+                      inView={sectionInView}
                     />
                   ))}
+                </div>
+              )}
+              {!loading && !error && totalPages > 1 && (
+                <div className="mt-12 flex justify-center items-center space-x-1 sm:space-x-2">
+                  <Button
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    variant="outline"
+                    size="sm"
+                    className="px-2 sm:px-3 py-1 text-xs sm:text-sm"
+                  >
+                    Previous
+                  </Button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                    <Button
+                      key={number}
+                      onClick={() => paginate(number)}
+                      variant={currentPage === number ? "default" : "outline"}
+                      size="sm"
+                      className="px-2 sm:px-3 py-1 text-xs sm:text-sm"
+                    >
+                      {number}
+                    </Button>
+                  ))}
+                  <Button
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    variant="outline"
+                    size="sm"
+                    className="px-2 sm:px-3 py-1 text-xs sm:text-sm"
+                  >
+                    Next
+                  </Button>
                 </div>
               )}
             </TabsContent>
