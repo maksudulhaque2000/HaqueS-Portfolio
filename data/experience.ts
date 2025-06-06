@@ -10,59 +10,46 @@ export interface ExperienceItem {
 
 export const experience: ExperienceItem[] = [
   {
-    id: 1,
-    title: "Senior Full Stack Developer",
-    company: "TechNova Solutions",
-    location: "San Francisco, CA",
-    period: "Jan 2022 - Present",
-    description: [
-      "Lead the development of enterprise-level web applications using Next.js and TypeScript.",
-      "Implemented CI/CD pipelines that reduced deployment time by 40%.",
-      "Mentored junior developers and conducted code reviews to maintain high code quality.",
-      "Collaborated with UX/UI designers to implement responsive and accessible interfaces."
-    ],
-    technologies: ["Next.js", "TypeScript", "Node.js", "AWS", "Docker", "PostgreSQL"]
-  },
-  {
-    id: 2,
-    title: "Frontend Developer",
-    company: "Digital Innovators Inc.",
-    location: "New York, NY",
-    period: "Mar 2020 - Dec 2021",
-    description: [
-      "Developed and maintained multiple React-based web applications for clients.",
-      "Created reusable component libraries that improved development efficiency by 30%.",
-      "Optimized application performance, resulting in 50% faster load times.",
-      "Integrated REST and GraphQL APIs for data fetching and state management."
-    ],
-    technologies: ["React", "JavaScript", "Redux", "SASS", "GraphQL", "Jest"]
-  },
-  {
-    id: 3,
-    title: "Junior Web Developer",
-    company: "CreativeTech Studios",
-    location: "Austin, TX",
-    period: "Jun 2018 - Feb 2020",
-    description: [
-      "Built responsive websites for clients across various industries.",
-      "Collaborated with the design team to implement pixel-perfect UIs.",
-      "Maintained and updated legacy applications.",
-      "Participated in daily standups and sprint planning sessions."
-    ],
-    technologies: ["HTML", "CSS", "JavaScript", "jQuery", "Bootstrap", "PHP"]
-  },
-  {
-    id: 4,
-    title: "Web Development Intern",
-    company: "StartUp Hub",
-    location: "Remote",
-    period: "Jan 2018 - May 2018",
-    description: [
-      "Assisted in the development of web applications under senior developer guidance.",
-      "Implemented responsive layouts and UI components.",
-      "Fixed bugs and optimized existing code.",
-      "Participated in code reviews to improve coding skills."
-    ],
-    technologies: ["HTML", "CSS", "JavaScript", "WordPress"]
-  }
+  "id": 1,
+  "title": "Project Intern (Data Archiving Lead)",
+  "company": "Tappware Solution LTD",
+  "location": "Dhaka, Bangladesh",
+  "period": "May 2021 - July 2021",
+  "description": [
+    "Led a critical data archiving project as a team lead under a government contract with the National Revenue Board (NRB).",
+    "Managed the end-to-end data migration and archiving process, ensuring high standards of data integrity and quality control.",
+    "Successfully delivered the complete project, which significantly streamlined the government's audit procedures and data retrieval systems.",
+    "Developed valuable skills in project management, team collaboration, and handling large-scale datasets in a professional environment."
+  ],
+  "technologies": [
+    "Data Management",
+    "Data Integrity",
+    "Microsoft Excel",
+    "SQL (for data verification)",
+    "Project Management",
+    "Team Leadership"
+  ]
+},
+{
+  "id": 2,
+  "title": "Junior Web Developer",
+  "company": "Creative Hub Digital",
+  "location": "Remote",
+  "period": "August 2022 - April 2023",
+  "description": [
+    "Developed responsive and user-friendly websites for various clients using fundamental web technologies.",
+    "Translated UI/UX design mockups from Figma into clean, functional, and pixel-perfect code.",
+    "Collaborated with senior developers to fix bugs, optimize website performance, and implement new features.",
+    "Gained hands-on experience with version control systems like Git for team-based projects."
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3",
+    "JavaScript (ES6+)",
+    "Bootstrap",
+    "jQuery",
+    "Git & GitHub",
+    "Figma"
+  ]
+}
 ];
