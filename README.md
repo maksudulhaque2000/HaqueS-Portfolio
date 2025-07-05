@@ -1,7 +1,7 @@
 # Haque's Portfolio - A Modern Developer Portfolio 🚀
 
 <div align="center">
-  <img src="cover.png" height="400" width="800" alt="Haque's Portfolio Cover"/>
+  <img src="./public/preview.png" height="400" width="800" alt="Haque's Portfolio Cover"/>
 </div>
 
 <div align="center">
@@ -9,7 +9,7 @@
     <em>My personal portfolio website, where I showcase my skills, projects, and experience. Built with Next.js</em>
   </p>
   <h3>
-    <a href="https://your-live-portfolio-url.com" target="_blank">🌐 View Live Demo</a>
+    <a href="https://haque-lake.vercel.app/" target="_blank">🌐 View Live Demo</a>
   </h3>
 </div>
 
