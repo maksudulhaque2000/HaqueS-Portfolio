@@ -1,28 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion } from '@/lib/motion-wrapper';
 import { ArrowDown } from 'lucide-react';
 
 export default function Hero() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
-
   const scrollToNextSection = () => {
     const aboutSection = document.getElementById('about');
     aboutSection?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <section className="relative h-screen flex flex-col justify-center items-center text-center px-4">
+    <section id="hero" className="relative h-screen flex flex-col justify-center items-center text-center px-4">
       <div className="absolute inset-0 bg-grid-pattern bg-fixed opacity-5"></div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -90,7 +79,7 @@ export default function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        className="absolute bottom-8 left-0 right-0 flex justify-center"
       >
         <Button
           variant="ghost"
