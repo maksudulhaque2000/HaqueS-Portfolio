@@ -28,7 +28,7 @@ export default function Footer() {
               <Github className="h-5 w-5" />
             </Link>
             <Link
-              href="https://www.linkedin.com/in/maksudulhaque2000/"
+              href="https://www.linkedin.com/in/maksudulhaque2000"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
@@ -55,7 +55,7 @@ export default function Footer() {
               <Youtube className="h-5 w-5" />
             </Link>
             <Link
-              href="https://www.instagram.com/maksudulhaque2000/"
+              href="https://www.instagram.com/maksudulhaque2000"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
