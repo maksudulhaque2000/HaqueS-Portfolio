@@ -7,7 +7,7 @@ import { useInView } from 'react-intersection-observer';
 import { SectionTitle } from '@/components/ui/section-title';
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
-import profile from '@/public/profile.png';
+import profile from '@/public/profile.jpg';
 
 const resumeFileName = 'Resume v.pdf';
 
