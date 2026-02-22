@@ -11,7 +11,7 @@ export interface Education {
 export const educationData: Education[] = [
   {
     id: 1,
-    degree: "Honours 3rd Year (Accounting)",
+    degree: "Honours 4th Year (Accounting)",
     institution: "Demra University College - DUC",
     duration: "2021-Present",
     description: "Currently pursuing a Bachelor of Honours degree in Accounting. Core coursework includes financial accounting, taxation, and auditing standards.",
